@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Add Transaction</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+    <style>
+        @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;900&display=swap");
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Poppins", sans-serif;
+        }
+        :root {
+            --primary-color: #10B981;
+            --secondary-color: #3B82F6;
+            --accent-color: #F472B6;
+            --bg-hover: #F1F5F9;
+            --text-primary: #1E293B;
+            --text-secondary: #64748B;
+            --bg-card: #FFFFFF;
+            --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.15);
+        }
+        body {
+            background: linear-gradient(135deg, #F0F9FF, #E0F2FE);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .dashboard {
+            display: flex;
+            width: 100%;
+        }
+        .sidebar {
+            background: linear-gradient(135deg, var(--secondary-color), #1E40AF);
+            padding: 30px 20px;
+            width: 250px;
+            position: fixed;
+            left: 10px;
+            top: 10px;
+            bottom: 10px;
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            box-shadow: var(--shadow-md);
+            transition: all 0.3s ease;
+        }
+        .sidebar a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 20px;
+            color: #FFFFFF;
+            text-decoration: none;
+            font-weight: 600;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+        .sidebar a:hover {
+            background: linear-gradient(135deg, var(--primary-color), #059669);
+            transform: scale(1.05) translateX(5px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+        .sidebar i {
+            font-size: 22px;
+        }
+        .main-content {
+            margin-left: 270px;
+            padding: 40px;
+            width: calc(100% - 270px);
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+        .header {
+            background: linear-gradient(90deg, var(--secondary-color), var(--primary-color));
+            padding: 25px 30px;
+            border-radius: 25px;
+            box-shadow: var(--shadow-lg);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            animation: slideIn 0.5s ease-out;
+        }
+        .header h1 {
+            font-size: 32px;
+            font-weight: 900;
+            letter-spacing: 1px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .budget-display {
+            background: var(--bg-card);
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: var(--shadow-md);
+            text-align: center;
+            animation: fadeIn 0.6s ease-out;
+        }
+        .budget-display h3 {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--text-primary);
+        }
+        .budget-display p {
+            font-size: 24px;
+            font-weight: 900;
+            color: var(--secondary-color);
+        }
+        .transaction-form {
+            background: var(--bg-card);
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: var(--shadow-md);
+            transition: all 0.3s ease;
+            animation: fadeIn 0.6s ease-out;
+        }
+        .transaction-form h3 {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--text-primary);
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            display: block;
+        }
+        .form-control {
+            border: 2px solid #D1D5DB;
+            background: #F9FAFB;
+            padding: 14px;
+            border-radius: 12px;
+            transition: all 0.4s ease;
+            width: 100%;
+            font-size: 16px;
+        }
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 15px rgba(16, 185, 129, 0.6), inset 0 0 5px rgba(16, 185, 129, 0.3);
+            transform: scale(1.02);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), #34D399);
+            border: none;
+            padding: 16px;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 600;
+            color: #FFFFFF;
+            width: 100%;
+            transition: all 0.4s ease;
+            box-shadow: 0 6px 18px rgba(16, 185, 129, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #34D399, var(--primary-color));
+            transform: translateY(-4px) scale(1.05);
+            box-shadow: 0 10px 25px rgba(16, 185, 129, 0.6);
+        }
+        .alert {
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            font-weight: 500;
+            animation: slideIn 0.6s ease-out;
+            text-align: center;
+        }
+        .alert-success {
+            background: linear-gradient(135deg, #D1FAE5, #A7F3D0);
+            color: #065F46;
+            box-shadow: 0 4px 12px rgba(6, 95, 70, 0.2);
+        }
+        .alert-danger {
+            background: linear-gradient(135deg, #FEE2E2, #FECACA);
+            color: #991B1B;
+            box-shadow: 0 4px 12px rgba(153, 27, 27, 0.2);
+        }
+        .transactions-section {
+            background: var(--bg-card);
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: var(--shadow-md);
+            margin-top: 30px;
+            animation: fadeIn 0.6s ease-out;
+        }
+        .transactions-section h3 {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--text-primary);
+        }
+        .transaction-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #E5E7EB;
+        }
+        .transaction-item:last-child {
+            border-bottom: none;
+        }
+        .transaction-item span {
+            font-size: 16px;
+            color: var(--text-primary);
+        }
+        .transaction-item .amount {
+            font-weight: 600;
+        }
+        .transaction-item .amount.income {
+            color: #10B981;
+        }
+        .transaction-item .amount.expense {
+            color: #EF4444;
+        }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @media (max-width: 768px) {
+            .dashboard {
+                flex-direction: column;
+            }
+            .sidebar {
+                width: 100%;
+                position: static;
+                flex-direction: row;
+                justify-content: space-around;
+                padding: 15px;
+                border-radius: 15px;
+            }
+            .main-content {
+                margin-left: 0;
+                padding: 20px;
+                width: 100%;
+            }
+        }
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 22px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <div class="sidebar">
+            <a href="{% url 'home' %}"><i class="bx bx-home"></i> Home</a>
+            <a href="{% url 'transactions' %}"><i class="bx bx-transfer"></i> Transactions</a>
+            <a href="{% url 'view_accounts' %}"><i class="bx bx-credit-card"></i> Accounts</a>
+            <a href="{% url 'transfer' %}"><i class="bx bx-money"></i> Transfer</a>
+            <a href="{% url 'expenses' %}"><i class="bx bx-line-chart"></i> Expenses</a>
+            <a href="{% url 'logout' %}"><i class="bx bx-log-out"></i> Logout</a>
+        </div>
+        <div class="main-content">
+            <div class="header">
+                <h1>Add Transaction</h1>
+            </div>
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+            <div class="budget-display">
+                <h3>Monthly Budget</h3>
+                <p>$<span id="budget-value">{{ monthly_budget|floatformat:2 }}</span></p>
+            </div>
+            <div class="transaction-form">
+                <h3>Add Transaction</h3>
+                <form method="POST" id="transaction-form">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="id_source_account">Source Account</label>
+                        {{ form.source_account }}
+                        {% if form.source_account.errors %}
+                            <div class="alert alert-danger">{{ form.source_account.errors.as_text }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="form-group">
+                        <label for="id_description">Description</label>
+                        {{ form.description }}
+                        {% if form.description.errors %}
+                            <div class="alert alert-danger">{{ form.description.errors.as_text }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="form-group">
+                        <label for="id_amount">Amount</label>
+                        {{ form.amount }}
+                        {% if form.amount.errors %}
+                            <div class="alert alert-danger">{{ form.amount.errors.as_text }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="form-group">
+                        <label for="id_transaction_type">Transaction Type</label>
+                        {{ form.transaction_type }}
+                        {% if form.transaction_type.errors %}
+                            <div class="alert alert-danger">{{ form.transaction_type.errors.as_text }}</div>
+                        {% endif %}
+                    </div>
+                    <button type="submit" class="btn-primary">Add Transaction</button>
+                </form>
+            </div>
+            <div class="transactions-section">
+                <h3>Recently Added (Last 24 Hours)</h3>
+                <div id="recent-transactions"></div>
+            </div>
+            <div class="transactions-section">
+                <h3>1 Week Before Added</h3>
+                <div id="week-ago-transactions"></div>
+            </div>
+        </div>
+    </div>
+    <script>
+        // Load transactions from Django context
+        const transactions = JSON.parse('{{ transactions_json|safe }}');
+
+        // Get accounts from the source_account dropdown for display purposes
+        const sourceAccountSelect = document.querySelector('#id_source_account');
+        const accounts = Array.from(sourceAccountSelect.options).map(option => ({
+            id: option.value,
+            name: option.text
+        })).filter(account => account.id);
+
+        // Function to format timestamp for display
+        function formatTimestamp(isoString) {
+            const date = new Date(isoString);
+            return `${date.toLocaleDateString('en-US')} ${date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true })}`;
+        }
+
+        // Function to display transactions
+        function displayTransactions() {
+            const now = new Date('2025-05-22T04:25:00+05:30'); // Current time
+            const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+            const oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+
+            const recentTransactions = document.getElementById('recent-transactions');
+            const weekAgoTransactions = document.getElementById('week-ago-transactions');
+            recentTransactions.innerHTML = '';
+            weekAgoTransactions.innerHTML = '';
+
+            transactions.forEach(tx => {
+                const txTime = new Date(tx.timestamp);
+                const account = accounts.find(acc => acc.id === tx.accountId);
+                const accountName = account ? account.name : 'Unknown Account';
+                const transactionItem = document.createElement('div');
+                transactionItem.className = 'transaction-item';
+                transactionItem.innerHTML = `
+                    <span>${accountName} - ${tx.description} (${formatTimestamp(tx.timestamp)})</span>
+                    <span class="amount ${tx.type}">${tx.type === 'income' ? '+' : '-'}$${Math.abs(tx.amount).toFixed(2)}</span>
+                `;
+
+                if (txTime >= oneDayAgo && txTime <= now) {
+                    recentTransactions.appendChild(transactionItem);
+                } else if (txTime >= oneWeekAgo && txTime < oneDayAgo) {
+                    weekAgoTransactions.appendChild(transactionItem);
+                }
+            });
+
+            if (recentTransactions.children.length === 0) {
+                recentTransactions.innerHTML = '<p>No recent transactions.</p>';
+            }
+            if (weekAgoTransactions.children.length === 0) {
+                weekAgoTransactions.innerHTML = '<p>No transactions from the past week.</p>';
+            }
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            displayTransactions();
+        });
+    </script>
+</body>
+</html>

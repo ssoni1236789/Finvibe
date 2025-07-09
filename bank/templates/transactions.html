@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Transaction History</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+    <style>
+        @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;900&display=swap");
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Poppins", sans-serif;
+        }
+        :root {
+            --primary-color: #10B981;
+            --secondary-color: #3B82F6;
+            --accent-color: #F472B6;
+            --bg-hover: #F1F5F9;
+            --text-primary: #1E293B;
+            --text-secondary: #64748B;
+            --bg-card: #FFFFFF;
+            --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.15);
+        }
+        body {
+            background: linear-gradient(135deg, #F0F9FF, #E0F2FE);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .dashboard {
+            display: flex;
+            width: 100%;
+        }
+        .sidebar {
+            background: linear-gradient(135deg, var(--secondary-color), #1E40AF);
+            padding: 30px 20px;
+            width: 250px;
+            position: fixed;
+            left: 10px;
+            top: 10px;
+            bottom: 10px;
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            box-shadow: var(--shadow-md);
+            transition: all 0.3s ease;
+        }
+        .sidebar a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 20px;
+            color: #FFFFFF;
+            text-decoration: none;
+            font-weight: 600;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+        .sidebar a:hover {
+            background: linear-gradient(135deg, var(--primary-color), #059669);
+            transform: scale(1.05) translateX(5px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+        .sidebar i {
+            font-size: 22px;
+        }
+        .main-content {
+            margin-left: 270px;
+            padding: 40px;
+            width: calc(100% - 270px);
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+        .header {
+            background: linear-gradient(90deg, var(--secondary-color), var(--primary-color));
+            padding: 30px;
+            border-radius: 25px;
+            box-shadow: var(--shadow-lg);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            animation: slideIn 0.5s ease-out;
+        }
+        .header h1 {
+            font-size: 38px;
+            font-weight: 900;
+            letter-spacing: 1.5px;
+            text-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+        }
+        .container {
+            background: var(--bg-card);
+            padding: 35px;
+            border-radius: 25px;
+            box-shadow: var(--shadow-md);
+            transition: all 0.3s ease;
+            animation: fadeIn 0.6s ease-out;
+        }
+        .account-select {
+            margin-bottom: 30px;
+            padding: 20px;
+            border-radius: 15px;
+            background: linear-gradient(135deg, #F9FAFB, #E2E8F0);
+            box-shadow: var(--shadow-md);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            transition: all 0.3s ease;
+        }
+        .account-select:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg);
+        }
+        .account-select label {
+            font-weight: 700;
+            font-size: 18px;
+            color: var(--text-primary);
+        }
+        .account-select select {
+            flex-grow: 1;
+            max-width: 400px;
+            padding: 12px 15px;
+            border: none;
+            border-radius: 10px;
+            background: #FFFFFF;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            font-size: 16px;
+            font-weight: 500;
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+        }
+        .account-select select:focus {
+            outline: none;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+            border: 2px solid var(--primary-color);
+        }
+        .account-select button {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, var(--primary-color), #059669);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+        .account-select button:hover {
+            background: linear-gradient(135deg, #059669, var(--primary-color));
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+        }
+        .account-select button:disabled {
+            background: #D1D5DB;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+        .transaction-card {
+            background: linear-gradient(145deg, #FFFFFF, #F8FAFC);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow-md);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            transition: all 0.3s ease;
+            animation: fadeInUp 0.5s ease-out;
+        }
+        .transaction-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+            background: linear-gradient(145deg, var(--bg-hover), #F8FAFC);
+        }
+        .transaction-card .icon {
+            font-size: 32px;
+            color: var(--text-secondary);
+            background: #F1F5F9;
+            padding: 15px;
+            border-radius: 50%;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        .transaction-card .details {
+            flex-grow: 1;
+        }
+        .transaction-card .details h3 {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+        }
+        .transaction-card .details p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin: 0;
+            line-height: 1.5;
+        }
+        .transaction-card .amount {
+            font-size: 20px;
+            font-weight: 700;
+            text-align: right;
+        }
+        .transaction-card .status {
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            text-align: right;
+            padding: 8px 16px;
+            border-radius: 20px;
+            background: #F1F5F9;
+        }
+        .text-success {
+            color: var(--primary-color);
+        }
+        .text-warning {
+            color: #F59E0B;
+        }
+        .text-danger {
+            color: #EF4444;
+        }
+        .no-transactions {
+            text-align: center;
+            padding: 40px;
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            background: linear-gradient(135deg, #F9FAFB, #E2E8F0);
+            border-radius: 20px;
+            box-shadow: var(--shadow-md);
+            animation: fadeIn 0.6s ease-out;
+        }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @media (max-width: 768px) {
+            .dashboard {
+                flex-direction: column;
+            }
+            .sidebar {
+                width: 100%;
+                position: static;
+                flex-direction: row;
+                justify-content: space-around;
+                padding: 15px;
+                border-radius: 15px;
+            }
+            .main-content {
+                margin-left: 0;
+                padding: 20px;
+                width: 100%;
+            }
+            .container {
+                padding: 25px;
+            }
+            .account-select {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            .account-select select {
+                max-width: 100%;
+            }
+            .account-select button {
+                width: 100%;
+            }
+            .transaction-card {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+                padding: 20px;
+            }
+            .transaction-card .amount,
+            .transaction-card .status {
+                text-align: left;
+                width: 100%;
+            }
+            .header h1 {
+                font-size: 26px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <div class="sidebar">
+            <a href="{% url 'home' %}"><i class="bx bx-home"></i> Home</a>
+            <a href="{% url 'transactions' %}"><i class="bx bx-transfer"></i> Transactions</a>
+            <a href="{% url 'view_accounts' %}"><i class="bx bx-credit-card"></i> Accounts</a>
+            <a href="{% url 'transfer' %}"><i class="bx bx-money"></i> Transfer</a>
+            <a href="{% url 'expenses' %}"><i class="bx bx-line-chart"></i> Expenses</a>
+            <a href="{% url 'logout' %}"><i class="bx bx-log-out"></i> Logout</a>
+        </div>
+        <div class="main-content">
+            <div class="header">
+                <h1>Transaction History</h1>
+            </div>
+            <div class="container">
+                <div class="account-select">
+                    <form method="GET" action="{% url 'transactions' %}">
+                        <label for="account_id">Select Account</label>
+                        <select name="account_id" id="account_id">
+                            <option value="">-- Select an Account --</option>
+                            {% for account in accounts %}
+                            <option value="{{ account.id }}" {% if selected_account.id == account.id %}selected{% endif %}>
+                                {{ account.account_holder_name }} - {{ account.bank_name }} ({{ account.account_number }})
+                            </option>
+                            {% endfor %}
+                        </select>
+                        <button type="submit" {% if not accounts %}disabled{% endif %}>View Transactions</button>
+                    </form>
+                </div>
+                {% if selected_account %}
+                <div class="transactions-list">
+                    {% for transaction in transactions %}
+                    <div class="transaction-card">
+                        <i class="icon bx {% if transaction.transaction_type == 'income' %}bx-arrow-to-bottom text-success{% elif transaction.transaction_type == 'expense' %}bx-arrow-to-top text-danger{% else %}bx-transfer text-secondary{% endif %}"></i>
+                        <div class="details">
+                            <h3>{{ transaction.source_account.account_holder_name }} → {{ transaction.receiver_name }}</h3>
+                            <p>{{ transaction.description|truncatechars:60 }}</p>
+                            <p>{{ transaction.date|date:"Y-m-d H:i" }}</p>
+                        </div>
+                        <div class="amount {% if transaction.transaction_type == 'income' %}text-success{% else %}text-danger{% endif %}">
+                            {% if transaction.transaction_type == 'income' %}+{% else %}-{% endif %}${{ transaction.amount|floatformat:2 }}
+                        </div>
+                        <div class="status {% if transaction.status == 'completed' %}text-success{% elif transaction.status == 'pending' %}text-warning{% else %}text-danger{% endif %}">
+                            {{ transaction.get_status_display }}
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="no-transactions">No transactions found for this account.</div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="no-transactions">Please select an account and click "View Transactions" to see transaction history.</div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</body>
+</html>

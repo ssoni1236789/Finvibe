@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Banking Dashboard</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+    <style>
+        @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800;900&display=swap");
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Inter", sans-serif;
+        }
+        :root {
+            --primary-color: #10B981;
+            --secondary-color: #7C3AED;
+            --accent-color: #EC4899;
+            --bg-hover: #F1F5F9;
+            --text-primary: #1E293B;
+            --text-secondary: #6B7280;
+            --bg-card: #FFFFFF;
+            --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.12);
+            --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.16);
+            --glow-color: rgba(16, 185, 129, 0.5);
+        }
+        body {
+            background: linear-gradient(145deg, #DBEAFE, #F3E8FF);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 24px;
+            overflow-x: hidden;
+            position: relative;
+        }
+        .particle-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--primary-color), transparent);
+            opacity: 0.3;
+            animation: float 15s infinite ease-in-out;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+        .dashboard {
+            display: flex;
+            width: 100%;
+            position: relative;
+            z-index: 2;
+        }
+        .sidebar {
+            background: linear-gradient(180deg, var(--secondary-color), #6D28D9);
+            padding: 32px 24px;
+            width: 260px;
+            position: fixed;
+            left: 12px;
+            top: 12px;
+            bottom: 12px;
+            border-radius: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            box-shadow: var(--shadow-md), 0 0 20px var(--glow-color);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .sidebar:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg), 0 0 30px var(--glow-color);
+        }
+        .sidebar a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px 20px;
+            color: #FFFFFF;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 15px;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(5px);
+        }
+        .sidebar a::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: 0.5s;
+        }
+        .sidebar a:hover::before {
+            left: 100%;
+        }
+        .sidebar a:hover {
+            background: linear-gradient(135deg, var(--primary-color), #059669);
+            transform: scale(1.05) translateX(8px);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+        }
+        .sidebar a i {
+            font-size: 24px;
+            transition: transform 0.3s ease;
+        }
+        .sidebar a:hover i {
+            transform: rotate(15deg) scale(1.2);
+        }
+        .main-content {
+            margin-left: 280px;
+            padding: 40px;
+            width: calc(100% - 280px);
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+        }
+        .header {
+            background: linear-gradient(90deg, var(--secondary-color), var(--primary-color));
+            padding: 28px 32px;
+            border-radius: 28px;
+            box-shadow: var(--shadow-lg), 0 0 20px var(--glow-color);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            animation: zoomIn 0.8s ease-out;
+            position: relative;
+            overflow: hidden;
+        }
+        .header::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 10% 20%, rgba(255, 255, 255, 0.25), transparent 50%);
+            opacity: 0.4;
+        }
+        .header h1 {
+            font-size: 36px;
+            font-weight: 900;
+            letter-spacing: 1.2px;
+            text-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+            position: relative;
+            z-index: 1;
+            animation: textGlow 2s infinite alternate;
+        }
+        @keyframes textGlow {
+            0% { text-shadow: 0 3px 6px rgba(0, 0, 0, 0.2); }
+            100% { text-shadow: 0 3px 12px var(--glow-color); }
+        }
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 28px;
+        }
+        .stat-card {
+            background: linear-gradient(145deg, #FFFFFF, #F8FAFC);
+            padding: 28px;
+            border-radius: 24px;
+            box-shadow: var(--shadow-sm);
+            text-align: center;
+            transition: all 0.4s ease;
+            border: 1px solid rgba(16, 185, 129, 0.15);
+            border-left: 8px solid var(--primary-color);
+            animation: fadeInUp 0.6s ease-out forwards;
+            position: relative;
+            overflow: hidden;
+        }
+        .stat-card:nth-child(1) { animation-delay: 0.1s; }
+        .stat-card:nth-child(2) { animation-delay: 0.2s; }
+        .stat-card:nth-child(3) { animation-delay: 0.3s; }
+        .stat-card:hover {
+            transform: translateY(-8px) rotateX(5deg) scale(1.02);
+            box-shadow: var(--shadow-lg), 0 0 20px var(--glow-color);
+            border-left-color: var(--accent-color);
+        }
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(16, 185, 129, 0.15), transparent);
+            transition: all 0.4s ease;
+        }
+        .stat-card:hover::before {
+            transform: scale(1.3);
+        }
+        .stat-card h3 {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+        .stat-card p {
+            font-size: 32px;
+            font-weight: 900;
+            color: var(--secondary-color);
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: color 0.3s ease, transform 0.3s ease;
+        }
+        .stat-card:hover p {
+            color: var(--accent-color);
+            transform: scale(1.05);
+        }
+        .transactions {
+            background: var(--bg-card);
+            padding: 28px;
+            border-radius: 24px;
+            box-shadow: var(--shadow-md), 0 0 15px var(--glow-color);
+            transition: all 0.3s ease;
+            animation: fadeIn 0.7s ease-out;
+        }
+        .transactions h3 {
+            font-size: 22px;
+            font-weight: 800;
+            margin-bottom: 20px;
+            color: var(--text-primary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .chart-container {
+            position: relative;
+            max-width: 100%;
+            height: 350px;
+            margin-top: 24px;
+            padding: 16px;
+            background: linear-gradient(145deg, #F9FAFB, #FFFFFF);
+            border-radius: 16px;
+            box-shadow: var(--shadow-sm);
+            opacity: 0;
+            animation: chartFadeIn 1.2s ease-out forwards;
+            animation-delay: 0.5s;
+        }
+        .chart-container canvas {
+            border-radius: 12px;
+        }
+        @keyframes chartFadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        @keyframes zoomIn {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @media (max-width: 1024px) {
+            .stats { grid-template-columns: repeat(2, 1fr); }
+            .sidebar { width: 240px; }
+            .main-content { margin-left: 260px; width: calc(100% - 260px); }
+        }
+        @media (max-width: 768px) {
+            .dashboard { flex-direction: column; }
+            .sidebar {
+                width: 100%;
+                position: static;
+                flex-direction: row;
+                justify-content: space-around;
+                padding: 16px;
+                border-radius: 16px;
+                flex-wrap: wrap;
+            }
+            .main-content {
+                margin-left: 0;
+                padding: 24px;
+                width: 100%;
+            }
+            .stats { grid-template-columns: 1fr; }
+            .header h1 { font-size: 28px; }
+            .chart-container { height: 300px; }
+        }
+        @media (max-width: 480px) {
+            .header h1 { font-size: 24px; }
+            .stat-card p { font-size: 24px; }
+            .transactions h3 { font-size: 18px; }
+            .chart-container { height: 250px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="particle-bg" id="particle-bg"></div>
+    <div class="dashboard">
+        <div class="sidebar">
+            <a href="{% url 'home' %}"><i class="bx bx-home"></i> Home</a>
+            <a href="{% url 'transactions' %}"><i class="bx bx-transfer"></i> Transactions</a>
+            <a href="{% url 'view_accounts' %}"><i class="bx bx-credit-card"></i> Accounts</a>
+            <a href="{% url 'transfer' %}"><i class="bx bx-money"></i> Transfer</a>
+            <a href="{% url 'expenses' %}"><i class="bx bx-line-chart"></i> Expenses</a>
+            <a href="{% url 'logout' %}"><i class="bx bx-log-out"></i> Logout</a>
+        </div>
+        <div class="main-content">
+            <div class="header">
+                <h1>Welcome, {{ request.user.username|title }}!</h1>
+            </div>
+            <div class="stats">
+                <div class="stat-card">
+                    <h3>Account Balance</h3>
+                    <p>${{ total_balance|floatformat:2 }}</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Total Transactions</h3>
+                    <p>{{ transactions.count }}</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Number of Accounts</h3>
+                    <p>{{ accounts.count }}</p>
+                </div>
+            </div>
+            <div class="transactions">
+                <h3>Account Transactions</h3>
+                <div class="chart-container">
+                    <canvas id="transactionChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        // Particle animation
+        const particleBg = document.getElementById('particle-bg');
+        function createParticle() {
+            const particle = document.createElement('div');
+            particle.classList.add('particle');
+            const size = Math.random() * 20 + 10;
+            particle.style.width = `${size}px`;
+            particle.style.height = `${size}px`;
+            particle.style.left = `${Math.random() * 100}%`;
+            particle.style.top = `${Math.random() * 100}%`;
+            particle.style.animationDuration = `${Math.random() * 10 + 10}s`;
+            particle.style.animationDelay = `${Math.random() * 5}s`;
+            particleBg.appendChild(particle);
+            setTimeout(() => particle.remove(), 20000);
+        }
+        for (let i = 0; i < 20; i++) {
+            setTimeout(createParticle, i * 500);
+        }
+        setInterval(createParticle, 1500);
+
+        // Chart initialization
+        const accountTransactions = {{ transactions_json|safe }};
+        // Collect unique dates across all accounts
+        const allDates = new Set();
+        accountTransactions.forEach(account => {
+            account.transactions.forEach(tx => {
+                allDates.add(new Date(tx.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
+            });
+        });
+        const dates = Array.from(allDates).sort((a, b) => new Date(a) - new Date(b));
+
+        // Prepare datasets for each account
+        const colors = ['#10B981', '#EC4899', '#7C3AED', '#F59E0B', '#EF4444']; // Primary, accent, secondary, and extras
+        const datasets = [];
+        accountTransactions.forEach((account, index) => {
+            const color = colors[index % colors.length];
+            const incomingData = new Array(dates.length).fill(0);
+            const outgoingData = new Array(dates.length).fill(0);
+            account.transactions.forEach(tx => {
+                const dateStr = new Date(tx.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                const dateIndex = dates.indexOf(dateStr);
+                if (tx.direction === 'incoming') {
+                    incomingData[dateIndex] += tx.amount;
+                } else {
+                    outgoingData[dateIndex] += tx.amount;
+                }
+            });
+            datasets.push({
+                label: `${account.account_name} (Incoming)`,
+                data: incomingData,
+                borderColor: color,
+                backgroundColor: `${color}40`, // 25% opacity
+                fill: true,
+                tension: 0.4,
+                pointBackgroundColor: color,
+                pointHoverBackgroundColor: color,
+                pointHoverBorderColor: '#FFFFFF',
+                pointHoverBorderWidth: 4,
+                pointRadius: 6,
+                pointHoverRadius: 8
+            });
+            datasets.push({
+                label: `${account.account_name} (Outgoing)`,
+                data: outgoingData,
+                borderColor: color,
+                backgroundColor: `${color}40`,
+                fill: true,
+                tension: 0.4,
+                pointBackgroundColor: color,
+                pointHoverBackgroundColor: color,
+                pointHoverBorderColor: '#FFFFFF',
+                pointHoverBorderWidth: 4,
+                pointRadius: 6,
+                pointHoverRadius: 8,
+                borderDash: [5, 5] // Dashed line for outgoing
+            });
+        });
+
+        const ctx = document.getElementById('transactionChart').getContext('2d');
+        const transactionChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: dates,
+                datasets: datasets
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        title: { display: true, text: 'Date', color: '#1E293B', font: { size: 14, weight: '600' } },
+                        grid: { display: false },
+                        ticks: { color: '#1E293B', font: { size: 12 } }
+                    },
+                    y: {
+                        title: { display: true, text: 'Amount ($)', color: '#1E293B', font: { size: 14, weight: '600' } },
+                        beginAtZero: true,
+                        grid: { color: '#E5E7EB', borderDash: [4, 4] },
+                        ticks: { color: '#1E293B', font: { size: 12 } }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: { font: { size: 14, weight: '600' }, color: '#1E293B', padding: 20 }
+                    },
+                    tooltip: {
+                        backgroundColor: '#1E293B',
+                        titleFont: { size: 14, weight: '600' },
+                        bodyFont: { size: 12 },
+                        padding: 12,
+                        cornerRadius: 8,
+                        callbacks: {
+                            label: function(context) {
+                                return `${context.dataset.label}: $${context.raw.toFixed(2)}`;
+                            }
+                        }
+                    }
+                },
+                interaction: {
+                    mode: 'nearest',
+                    intersect: false,
+                    axis: 'x'
+                },
+                animation: {
+                    duration: 1500,
+                    easing: 'easeOutQuart',
+                    onComplete: function() {
+                        this.options.animation.duration = 0; // Disable animation after initial load
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

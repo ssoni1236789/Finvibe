@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Payment Transfer</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+    <style>
+        @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;900&display=swap");
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Poppins", sans-serif;
+        }
+        :root {
+            --primary-color: #10B981;
+            --secondary-color: #3B82F6;
+            --accent-color: #F472B6;
+            --bg-hover: #F1F5F9;
+            --text-primary: #1E293B;
+            --text-secondary: #64748B;
+            --bg-card: #FFFFFF;
+            --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.15);
+        }
+        body {
+            background: linear-gradient(135deg, #F0F9FF, #E0F2FE);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .dashboard {
+            display: flex;
+            width: 100%;
+        }
+        .sidebar {
+            background: linear-gradient(135deg, var(--secondary-color), #1E40AF);
+            padding: 30px 20px;
+            width: 250px;
+            position: fixed;
+            left: 10px;
+            top: 10px;
+            bottom: 10px;
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            box-shadow: var(--shadow-md);
+            transition: all 0.3s ease;
+        }
+        .sidebar a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 20px;
+            color: #FFFFFF;
+            text-decoration: none;
+            font-weight: 600;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+        .sidebar a:hover {
+            background: linear-gradient(135deg, var(--primary-color), #059669);
+            transform: scale(1.05) translateX(5px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+        .sidebar i {
+            font-size: 22px;
+        }
+        .main-content {
+            margin-left: 270px;
+            padding: 40px;
+            width: calc(100% - 270px);
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+        .header {
+            background: linear-gradient(90deg, var(--secondary-color), var(--primary-color));
+            padding: 25px 30px;
+            border-radius: 25px;
+            box-shadow: var(--shadow-lg);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            animation: slideIn 0.5s ease-out;
+            position: relative;
+            overflow: hidden;
+        }
+        .header h1 {
+            font-size: 32px;
+            font-weight: 900;
+            letter-spacing: 1px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, transparent 70%);
+            opacity: 0.3;
+        }
+        .container {
+            max-width: 700px;
+            background: var(--bg-card);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: var(--shadow-lg);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            animation: fadeIn 0.6s ease-out;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+        .container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.2);
+        }
+        .form-group {
+            margin-bottom: 25px;
+            position: relative;
+        }
+        .form-group label {
+            font-weight: 700;
+            color: var(--text-primary);
+            font-size: 14px;
+            margin-bottom: 10px;
+            display: block;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+        .form-group.required label::after {
+            content: '*';
+            color: var(--accent-color);
+            margin-left: 5px;
+            font-size: 14px;
+        }
+        .form-control {
+            border: 2px solid #D1D5DB;
+            background: #F9FAFB;
+            padding: 14px 45px 14px 45px;
+            border-radius: 12px;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            width: 100%;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+        }
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 12px rgba(16, 185, 129, 0.4), inset 0 0 4px rgba(16, 185, 129, 0.2);
+            outline: none;
+            transform: scale(1.01);
+        }
+        .form-control-textarea {
+            border: 2px solid #D1D5DB;
+            background: #F9FAFB;
+            padding: 14px 45px 14px 45px;
+            border-radius: 12px;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            width: 100%;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+            min-height: 100px;
+            resize: vertical;
+        }
+        .form-control-textarea:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 12px rgba(16, 185, 129, 0.4), inset 0 0 4px rgba(16, 185, 129, 0.2);
+            outline: none;
+            transform: scale(1.01);
+        }
+        .form-group i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-20%);
+            color: var(--text-secondary);
+            font-size: 20px;
+            transition: color 0.3s ease;
+        }
+        .form-group.textarea-group i {
+            top: 30px;
+            transform: translateY(0);
+        }
+        .form-control:focus + i,
+        .form-control:not(:placeholder-shown) + i,
+        .form-control-textarea:focus + i,
+        .form-control-textarea:not(:placeholder-shown) + i {
+            color: var(--primary-color);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), #34D399);
+            border: none;
+            padding: 16px;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 700;
+            color: #FFFFFF;
+            width: 100%;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.5);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #34D399, var(--primary-color));
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 12px 30px rgba(16, 185, 129, 0.7);
+        }
+        .btn-primary::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: 0.5s;
+        }
+        .btn-primary:hover::after {
+            left: 100%;
+        }
+        .btn-secondary {
+            background: linear-gradient(135deg, #6B7280, #4B5563);
+            border: none;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #FFFFFF;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(107, 114, 128, 0.4);
+        }
+        .btn-secondary:hover {
+            background: linear-gradient(135deg, #4B5563, #6B7280);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(107, 114, 128, 0.6);
+        }
+        .alert {
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            font-weight: 500;
+            animation: slideIn 0.6s ease-out;
+            text-align: center;
+            background: linear-gradient(135deg, #D1FAE5, #A7F3D0);
+            color: #065F46;
+            box-shadow: 0 4px 12px rgba(6, 95, 70, 0.2);
+            border-left: 5px solid var(--primary-color);
+        }
+        .alert-danger {
+            background: linear-gradient(135deg, #FEE2E2, #FECACA);
+            color: #991B1B;
+            box-shadow: 0 4px 12px rgba(153, 27, 27, 0.2);
+            border-left: 5px solid #EF4444;
+        }
+        .radio-group {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 25px;
+            background: #F9FAFB;
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+        }
+        .radio-group label {
+            font-weight: 600;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+        .radio-group input[type="radio"] {
+            accent-color: var(--primary-color);
+            width: 18px;
+            height: 18px;
+        }
+        .radio-group label::after {
+            content: '*';
+            color: var(--accent-color);
+            font-size: 14px;
+        }
+        .tooltip {
+            position: relative;
+        }
+        .tooltip .tooltip-text {
+            visibility: hidden;
+            width: 200px;
+            background: var(--text-primary);
+            color: #FFFFFF;
+            text-align: center;
+            border-radius: 6px;
+            padding: 8px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 12px;
+        }
+        .tooltip:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @media (max-width: 768px) {
+            .dashboard {
+                flex-direction: column;
+            }
+            .sidebar {
+                width: 100%;
+                position: static;
+                flex-direction: row;
+                justify-content: space-around;
+                padding: 15px;
+                border-radius: 15px;
+            }
+            .main-content {
+                margin-left: 0;
+                padding: 20px;
+                width: 100%;
+            }
+            .container {
+                padding: 20px;
+            }
+            .form-control, .form-control-textarea, .btn-primary {
+                font-size: 14px;
+            }
+            .header h1 {
+                font-size: 24px;
+            }
+            .radio-group {
+                flex-direction: column;
+                gap: 10px;
+            }
+            .form-control-textarea {
+                min-height: 80px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <div class="sidebar">
+            <a href="{% url 'home' %}"><i class="bx bx-home"></i> Home</a>
+            <a href="{% url 'transactions' %}"><i class="bx bx-transfer"></i> Transactions</a>
+            <a href="{% url 'view_accounts' %}"><i class="bx bx-credit-card"></i> Accounts</a>
+            <a href="{% url 'transfer' %}"><i class="bx bx-money"></i> Transfer</a>
+            <a href="{% url 'expenses' %}"><i class="bx bx-line-chart"></i> Expenses</a>
+            <a href="{% url 'logout' %}"><i class="bx bx-log-out"></i> Logout</a>
+        </div>
+        <div class="main-content">
+            <div class="header">
+                <h1>Payment Transfer</h1>
+            </div>
+            <div class="container">
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+                <form method="POST" id="transfer-form">
+                    {% csrf_token %}
+                    <div class="form-group radio-group required">
+                        <label>Transfer Type</label>
+                        {{ form.transfer_type }}
+                    </div>
+                    <div class="form-group required">
+                        <label for="id_source_account">Source Account</label>
+                        {{ form.source_account }}
+                        <i class="bx bx-credit-card"></i>
+                        <div class="tooltip">
+                            <i class="bx bx-info-circle" style="position: absolute; right: 15px; top: 50%; transform: translateY(-20%); color: var(--text-secondary);"></i>
+                            <span class="tooltip-text">Select the account from which funds will be transferred.</span>
+                        </div>
+                    </div>
+                    <div class="form-group internal-field required">
+                        <label for="id_recipient_account">Recipient Account</label>
+                        {{ form.recipient_account }}
+                        <i class="bx bx-wallet"></i>
+                        <div class="tooltip">
+                            <i class="bx bx-info-circle" style="position: absolute; right: 15px; top: 50%; transform: translateY(-20%); color: var(--text-secondary);"></i>
+                            <span class="tooltip-text">Choose another account within the system for internal transfers.</span>
+                        </div>
+                    </div>
+                    <div class="form-group external-field required">
+                        <label for="id_receiver_name">Receiver Name</label>
+                        <input type="text" name="receiver_name" id="id_receiver_name" class="form-control" placeholder="Enter receiver's name">
+                        <i class="bx bx-user"></i>
+                        <div class="tooltip">
+                            <i class="bx bx-info-circle" style="position: absolute; right: 15px; top: 50%; transform: translateY(-20%); color: var(--text-secondary);"></i>
+                            <span class="tooltip-text">Full name of the recipient for external transfers.</span>
+                        </div>
+                    </div>
+                    <div class="form-group external-field required">
+                        <label for="id_recipient_account_no">Recipient Account Number</label>
+                        <input type="text" name="recipient_account_no" id="id_recipient_account_no" class="form-control" placeholder="Enter receiver's account number">
+                        <i class="bx bx-hash"></i>
+                        <div class="tooltip">
+                            <i class="bx bx-info-circle" style="position: absolute; right: 15px; top: 50%; transform: translateY(-20%); color: var(--text-secondary);"></i>
+                            <span class="tooltip-text">Account number for the external recipient.</span>
+                        </div>
+                    </div>
+                    <div class="form-group external-field required">
+                        <label for="id_sender_cvv">Sender CVV</label>
+                        <input type="text" name="sender_cvv" id="id_sender_cvv" class="form-control" placeholder="Enter CVV" maxlength="3">
+                        <i class="bx bx-lock-alt"></i>
+                        <div class="tooltip">
+                            <i class="bx bx-info-circle" style="position: absolute; right: 15px; top: 50%; transform: translateY(-20%); color: var(--text-secondary);"></i>
+                            <span class="tooltip-text">3-digit CVV code for external transfer security.</span>
+                        </div>
+                    </div>
+                    <div class="form-group required">
+                        <label for="id_amount">Amount</label>
+                        {{ form.amount }}
+                        <i class="bx bx-money"></i>
+                        <div class="tooltip">
+                            <i class="bx bx-info-circle" style="position: absolute; right: 15px; top: 50%; transform: translateY(-20%); color: var(--text-secondary);"></i>
+                            <span class="tooltip-text">Enter the amount to transfer (must be positive).</span>
+                        </div>
+                    </div>
+                    <div class="form-group textarea-group">
+                        <label for="id_description">Description (Optional)</label>
+                        <textarea name="description" id="id_description" class="form-control-textarea" placeholder="Enter a description (optional)"></textarea>
+                        <i class="bx bx-detail"></i>
+                        <div class="tooltip">
+                            <i class="bx bx-info-circle" style="position: absolute; right: 15px; top: 30px; color: var(--text-secondary);"></i>
+                            <span class="tooltip-text">Optional note or purpose of the transfer.</span>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-primary" data-toggle="modal" data-target="#confirmModal">Transfer Funds</button>
+                </form>
+                <!-- Confirmation Modal -->
+                <div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="confirmModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="confirmModalLabel">Confirm Transfer</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                Are you sure you want to transfer the specified amount?
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="window.location.href='{% url 'transfer' %}'">No</button>
+                                <button type="button" class="btn btn-primary" onclick="document.getElementById('transfer-form').submit();">Yes</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const transferTypeRadios = document.querySelectorAll('input[name="transfer_type"]');
+            const externalFields = document.querySelectorAll('.external-field');
+            const internalFields = document.querySelectorAll('.internal-field');
+            
+
+            function toggleFields() {
+                const transferType = document.querySelector('input[name="transfer_type"]:checked').value;
+                if (transferType === 'internal') {
+                    internalFields.forEach(field => field.style.display = 'block');
+                    externalFields.forEach(field => {
+                        field.style.display = 'none';
+                        // Clear external fields
+                        document.querySelector('#id_receiver_name').value = '';
+                        document.querySelector('#id_recipient_account_no').value = '';
+                        document.querySelector('#id_sender_cvv').value = '';
+                        // Remove required attribute
+                        document.querySelector('#id_receiver_name').removeAttribute('required');
+                        document.querySelector('#id_recipient_account_no').removeAttribute('required');
+                        document.querySelector('#id_sender_cvv').removeAttribute('required');
+                    });
+                    document.querySelector('#id_recipient_account').setAttribute('required', '');
+                } else {
+                    internalFields.forEach(field => {
+                        field.style.display = 'none';
+                        // Clear internal field
+                        document.querySelector('#id_recipient_account').value = '';
+                        document.querySelector('#id_recipient_account').removeAttribute('required');
+                    });
+                    externalFields.forEach(field => {
+                        field.style.display = 'block';
+                        // Add required attribute
+                        document.querySelector('#id_receiver_name').setAttribute('required', '');
+                        document.querySelector('#id_recipient_account_no').setAttribute('required', '');
+                        document.querySelector('#id_sender_cvv').setAttribute('required', '');
+                    });
+                }
+            }
+
+            transferTypeRadios.forEach(radio => {
+                radio.addEventListener('change', toggleFields);
+            });
+
+            // Initialize field visibility and reset form
+            toggleFields();
+            document.getElementById('transfer-form').reset();
+
+            // Client-side validation
+            document.getElementById('transfer-form').addEventListener('submit', function(e) {
+                const transferType = document.querySelector('input[name="transfer_type"]:checked').value;
+                const amount = document.querySelector('#id_amount').value;
+                if (transferType === 'external') {
+                    const cvv = document.querySelector('#id_sender_cvv').value;
+                    if (!/^\d{3}$/.test(cvv)) {
+                        e.preventDefault();
+                        alert('CVV must be a 3-digit number.');
+                    }
+                }
+                if (amount <= 0) {
+                    e.preventDefault();
+                    alert('Amount must be greater than zero.');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

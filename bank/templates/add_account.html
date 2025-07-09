@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Add Bank Account</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+    <style>
+        @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;900&display=swap");
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Poppins", sans-serif;
+        }
+        :root {
+            --primary-color: #10B981;
+            --secondary-color: #3B82F6;
+            --accent-color: #F472B6;
+            --bg-hover: #F1F5F9;
+            --text-primary: #1E293B;
+            --text-secondary: #64748B;
+            --bg-card: #FFFFFF;
+            --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.15);
+        }
+        body {
+            background: linear-gradient(135deg, #F0F9FF, #E0F2FE);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .dashboard {
+            display: flex;
+            width: 100%;
+        }
+        .sidebar {
+            background: linear-gradient(135deg, var(--secondary-color), #1E40AF);
+            padding: 30px 20px;
+            width: 250px;
+            position: fixed;
+            left: 10px;
+            top: 10px;
+            bottom: 10px;
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            box-shadow: var(--shadow-md);
+            transition: all 0.3s ease;
+        }
+        .sidebar a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 20px;
+            color: #FFFFFF;
+            text-decoration: none;
+            font-weight: 600;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+        .sidebar a:hover {
+            background: linear-gradient(135deg, var(--primary-color), #059669);
+            transform: scale(1.05) translateX(5px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+        .sidebar i {
+            font-size: 22px;
+        }
+        .main-content {
+            margin-left: 270px;
+            padding: 40px;
+            width: calc(100% - 270px);
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+        .header {
+            background: linear-gradient(90deg, var(--secondary-color), var(--primary-color));
+            padding: 25px 30px;
+            border-radius: 25px;
+            box-shadow: var(--shadow-lg);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            animation: slideIn 0.5s ease-out;
+            position: relative;
+            overflow: hidden;
+        }
+        .header h1 {
+            font-size: 32px;
+            font-weight: 900;
+            letter-spacing: 1px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, transparent 70%);
+            opacity: 0.3;
+        }
+        .container {
+            max-width: 700px;
+            background: var(--bg-card);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: var(--shadow-lg);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            animation: fadeIn 0.6s ease-out;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+        .container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.2);
+        }
+        .form-group {
+            margin-bottom: 25px;
+            position: relative;
+        }
+        .form-group label {
+            font-weight: 700;
+            color: var(--text-primary);
+            font-size: 14px;
+            margin-bottom: 10px;
+            display: block;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+        .form-group.required label::after {
+            content: '*';
+            color: var(--accent-color);
+            margin-left: 5px;
+            font-size: 14px;
+        }
+        .form-control {
+            border: 3px solid #A1A1AA; /* Updated border */
+            background: #F9FAFB;
+            padding: 14px 45px 14px 45px;
+            border-radius: 12px;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            width: 100%;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+        }
+        .form-control:focus {
+            border: 3px solid var(--primary-color); /* Updated focus border */
+            box-shadow: 0 0 12px rgba(16, 185, 129, 0.4), inset 0 0 4px rgba(16, 185, 129, 0.2);
+            outline: none;
+            transform: scale(1.01);
+        }
+        .form-group i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-20%);
+            color: var(--text-secondary);
+            font-size: 20px;
+            transition: color 0.3s ease;
+        }
+        .form-control:focus + i,
+        .form-control:not(:placeholder-shown) + i {
+            color: var(--primary-color);
+        }
+        .btn-save {
+            background: linear-gradient(135deg, var(--primary-color), #34D399);
+            border: none;
+            padding: 16px;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 700;
+            color: #FFFFFF;
+            width: 48%;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.5);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-save:hover {
+            background: linear-gradient(135deg, #34D399, var(--primary-color));
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 12px 30px rgba(16, 185, 129, 0.7);
+        }
+        .btn-save::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: 0.5s;
+        }
+        .btn-save:hover::after {
+            left: 100%;
+        }
+        .btn-cancel {
+            background: linear-gradient(135deg, #6B7280, #4B5563);
+            border: none;
+            padding: 16px;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 700;
+            color: #FFFFFF;
+            width: 48%;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 20px rgba(107, 114, 128, 0.5);
+            text-decoration: none;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-cancel:hover {
+            background: linear-gradient(135deg, #4B5563, #6B7280);
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 12px 30px rgba(107, 114, 128, 0.7);
+        }
+        .btn-cancel::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: 0.5s;
+        }
+        .btn-cancel:hover::after {
+            left: 100%;
+        }
+        .alert {
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            font-weight: 500;
+            animation: slideIn 0.6s ease-out;
+            text-align: center;
+            background: linear-gradient(135deg, #D1FAE5, #A7F3D0);
+            color: #065F46;
+            box-shadow: 0 4px 12px rgba(6, 95, 70, 0.2);
+            border-left: 5px solid var(--primary-color);
+        }
+        .alert-danger {
+            background: linear-gradient(135deg, #FEE2E2, #FECACA);
+            color: #991B1B;
+            box-shadow: 0 4px 12px rgba(153, 27, 27, 0.2);
+            border-left: 5px solid #EF4444;
+        }
+        .tooltip {
+            position: relative;
+        }
+        .tooltip .tooltip-text {
+            visibility: hidden;
+            width: 200px;
+            background: var(--text-primary);
+            color: #FFFFFF;
+            text-align: center;
+            border-radius: 6px;
+            padding: 8px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 12px;
+        }
+        .tooltip:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @media (max-width: 768px) {
+            .dashboard {
+                flex-direction: column;
+            }
+            .sidebar {
+                width: 100%;
+                position: static;
+                flex-direction: row;
+                justify-content: space-around;
+                padding: 15px;
+                border-radius: 15px;
+            }
+            .main-content {
+                margin-left: 0;
+                padding: 20px;
+                width: 100%;
+            }
+            .container {
+                padding: 20px;
+            }
+            .form-control, .btn-save, .btn-cancel {
+                font-size: 14px;
+            }
+            .btn-save, .btn-cancel {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+            .header h1 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <div class="sidebar">
+            <a href="{% url 'home' %}"><i class="bx bx-home"></i> Home</a>
+            <a href="{% url 'transactions' %}"><i class="bx bx-transfer"></i> Transactions</a>
+            <a href="{% url 'view_accounts' %}"><i class="bx bx-credit-card"></i> Accounts</a>
+            <a href="{% url 'transfer' %}"><i class="bx bx-money"></i> Transfer</a>
+            <a href="{% url 'expenses' %}"><i class="bx bx-line-chart"></i> Expenses</a>
+            <a href="{% url 'logout' %}"><i class="bx bx-log-out"></i> Logout</a>
+        </div>
+        <div class="main-content">
+            <div class="header">
+                <h1>Add Bank Account</h1>
+            </div>
+            <div class="container">
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+                <form method="POST" id="add-account-form">
+                    {% csrf_token %}
+                    <div class="form-group required">
+                        <label for="id_account_holder_name">Account Holder Name</label>
+                        {{ form.account_holder_name }}
+                        <i class="bx bx-user"></i>
+                        <div class="tooltip">
+                            <i class="bx bx-info-circle" style="position: absolute; right: 15px; top: 50%; transform: translateY(-20%); color: var(--text-secondary);"></i>
+                            <span class="tooltip-text">Full name of the account holder as per bank records.</span>
+                        </div>
+                    </div>
+                    <div class="form-group required">
+                        <label for="id_bank_name">Bank Name</label>
+                        {{ form.bank_name }}
+                        <i class="bx bx-building"></i>
+                        <div class="tooltip">
+                            <i class="bx bx-info-circle" style="position: absolute; right: 15px; top: 50%; transform: translateY(-20%); color: var(--text-secondary);"></i>
+                            <span class="tooltip-text">Name of the bank (e.g., HDFC, SBI).</span>
+                        </div>
+                    </div>
+                    <div class="form-group required">
+                        <label for="id_account_number">Account Number</label>
+                        {{ form.account_number }}
+                        <i class="bx bx-hash"></i>
+                        <div class="tooltip">
+                            <i class="bx bx-info-circle" style="position: absolute; right: 15px; top: 50%; transform: translateY(-20%); color: var(--text-secondary);"></i>
+                            <span class="tooltip-text">Unique bank account number (check your passbook or statement).</span>
+                        </div>
+                    </div>
+                    <div class="form-group required">
+                        <label for="id_account_type">Account Type</label>
+                        {{ form.account_type }}
+                        <i class="bx bx-credit-card"></i>
+                        <div class="tooltip">
+                            <i class="bx bx-info-circle" style="position: absolute; right: 15px; top: 50%; transform: translateY(-20%); color: var(--text-secondary);"></i>
+                            <span class="tooltip-text">Select the type of account (e.g., Savings, Current).</span>
+                        </div>
+                    </div>
+                    <div class="form-group required">
+                        <label for="id_ifsc_code">IFSC Code</label>
+                        {{ form.ifsc_code }}
+                        <i class="bx bx-barcode"></i>
+                        <div class="tooltip">
+                            <i class="bx bx-info-circle" style="position: absolute; right: 15px; top: 50%; transform: translateY(-20%); color: var(--text-secondary);"></i>
+                            <span class="tooltip-text">11-character IFSC code (e.g., SBIN0001234).</span>
+                        </div>
+                    </div>
+                    <div class="form-group required">
+                        <label for="id_amount">Initial Amount</label>
+                        {{ form.amount }}
+                        <i class="bx bx-money"></i>
+                        <div class="tooltip">
+                            <i class="bx bx-info-circle" style="position: absolute; right: 15px; top: 50%; transform: translateY(-20%); color: var(--text-secondary);"></i>
+                            <span class="tooltip-text">Initial balance for the account (e.g., 0.00 or positive amount).</span>
+                        </div>
+                    </div>
+                    <div class="flex justify-between mt-6">
+                        <button type="submit" class="btn-save">Save</button>
+                        <a href="{% url 'view_accounts' %}" class="btn-cancel">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Client-side validation
+            document.getElementById('add-account-form').addEventListener('submit', function(e) {
+                const accountNumber = document.querySelector('#id_account_number').value;
+                const ifscCode = document.querySelector('#id_ifsc_code').value;
+                const amount = document.querySelector('#id_amount').value;
+
+                // Basic account number validation (numbers only, 8-20 digits)
+                if (!/^\d{8,20}$/.test(accountNumber)) {
+                    e.preventDefault();
+                    alert('Account number must be 8-20 digits.');
+                }
+
+                // Basic IFSC code validation (11 characters, e.g., SBIN0001234)
+                if (!/^[A-Z]{4}0[A-Z0-9]{6}$/.test(ifscCode)) {
+                    e.preventDefault();
+                    alert('IFSC code must be 11 characters (e.g., SBIN0001234).');
+                }
+
+                // Amount must be non-negative
+                if (amount < 0) {
+                    e.preventDefault();
+                    alert('Initial amount cannot be negative.');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
